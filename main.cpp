@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -19,43 +20,9 @@ class otherInsuraance:public baseInsurance //I don't know what other type of ins
 
 //################################################################################
 
-class baseClinic //Clinic==Department
+class baseTest //
 {
-protected:
-public:
-    void askForTest(){}
-};
-
-class radiologyClinic:public baseClinic
-{
-
-};
-
-class labClinic:public baseClinic
-{
-
-};
-
-class cardiologyClinic:public baseClinic
-{
-
-};
-
-class orthopedicsClinic:public baseClinic
-{
-
-};
-
-class endocrinologyClinic:public baseClinic
-{
-
-};
-
-//################################################################################
-
-class baseTest //like Mcdonalds food,drink; Burgerking food,drink example
-{
-    baseClinic departmentAdministered; //XRay->radiology , blood->lab
+     //XRay->radiology , blood->lab
 };
 
 class baseBloodTest:public baseTest
@@ -73,17 +40,17 @@ class endocrinologyBloodTest:public baseBloodTest
 
 };
 
-class baseXRayTest:public baseTest
+class baseRadiologicalTest:public baseTest
 {
 
 };
 
-class cardiologyXRayTest:public baseXRayTest
+class cardiologyEKGTest:public baseRadiologicalTest
 {
 
 };
 
-class orthopedicsXRayTest:public baseXRayTest
+class orthopedicsXRayTest:public baseRadiologicalTest
 {
 
 };
@@ -101,11 +68,10 @@ public:
         email=setEmail;
         telephoneNum=setTelephoneNum;
     }
+    const string getEmail() {
+        return email;
+    }
 };
-
-//###############################################################################
-
-//drug classes here
 
 //###############################################################################
 
@@ -114,10 +80,82 @@ class patient
 private:
     demographicInfo patientDemographicInfo;
     baseInsurance patientInsurance;
+    vector<baseTest*> testsHaveDone;
+public:
+    const vector<baseTest *> &getTestsHaveDone() {
+        return testsHaveDone;
+    }
+    const string getEmail() {
+        return patientDemographicInfo.getEmail();
+    }
+
 
 };
 
 //##############################################################################
+
+class drugRecord
+{
+private:
+    vector<patient*> drugOwners[6];//vector of patients for 6 different drugs
+public:
+    void addPatientToRecord(patient* patientToAdd, int whichDrug)
+    {
+        drugOwners[whichDrug].push_back(patientToAdd);
+    }
+    void informAllPatients(int whichDrug)//inform all drug owners about side effects
+    {
+        for(int i=0;i<drugOwners[whichDrug].size();i++)
+        {
+            cout<<"Patient with email: "<<drugOwners[whichDrug][i]->getEmail()<<" have been informed"<<endl;
+        }
+    }
+
+};
+
+//###############################################################################
+
+class baseClinic //Clinic==Department
+{
+protected:
+
+public:
+    virtual void askForTest(patient* currentPatient){}
+};
+
+class radiologyClinic:public baseClinic //will be modified to be a singleton later, this class may act as a factory class to create tests
+{
+
+};
+
+class labClinic:public baseClinic
+{
+
+};
+
+class cardiologyClinic:public baseClinic
+{
+public:
+    void askForTest(patient* currentPatient)
+    {
+        //will search through test vector of patient and see if required tests have done
+        //if not, it will request associated clinic to administer test.
+    }
+};
+
+class orthopedicsClinic:public baseClinic
+{
+
+};
+
+class endocrinologyClinic:public baseClinic
+{
+
+};
+
+//################################################################################
+
+
 
 int main() {
 
