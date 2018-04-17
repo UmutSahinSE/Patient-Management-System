@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <string>
+#include <cstdlib>
 
 using namespace std;
 
@@ -57,7 +59,7 @@ class governmentInsurance:public baseInsurance
 
 };
 
-class otherInsuraance:public baseInsurance //I don't know what other type of insurances are. We should modify the class name
+class otherInsurance:public baseInsurance //I don't know what other type of insurances are. We should modify the class name
 {
 
 };
@@ -114,14 +116,57 @@ public:
 
 };
 
-class radiologyClinic:public baseClinic //will be modified to be a singleton later, this class may act as a factory class to create tests
-{
+class Mutex{}; //Stub to manage a mutex
+
+class Lock{
 public:
+    Lock(Mutex& m) : mutex(m){ //Stub to acquired mutex
+        cout<<"Acquired the lock"<<endl;
+    }
+    ~Lock(){ //Stub to release lock
+        cout<<"Releasing the lock"<<endl;
+    }
+
+private:
+    Mutex & mutex;
+};
+//Singleton Class
+class radiologyClinic:public baseClinic //This class may act as a factory class to create tests
+{
+private:
     radiologyClinic():clinicName("radiology")
     {
         //this class will produce Test objects. Test type will be decided in checkTests command.
+        //requiredTests.push_back("Something about radiology");
+        //...
+    }
+    //Prevent Copying
+    radiologyClinic (const radiologyClinic&);
+    radiologyClinic& operator=(const radiologyClinic&);
+
+    static radiologyClinic *instance;
+    //vector<string> requiredTests;
+
+    //Lock synchronization object
+    static Mutex mutex;
+public:
+    static radiologyClinic *GetradiologyClinic(){
+        if(instance == NULL){
+            Lock lock(&mutex);
+            if(instance == NULL){
+                instance = new radiologyClinic();
+            }
+        }
+        return instance;
+
+    }
+
+    string GetrequiredTest(){
+        return requiredTests(rand() % requiredTests.size());
     }
 };
+Mutex radiologyClinic::mutex;
+radiologyClinic *radiologyClinic1::instance = NULL;
 
 class labClinic:public baseClinic
 {
