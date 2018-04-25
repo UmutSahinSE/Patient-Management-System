@@ -17,6 +17,48 @@ public:
     string getTestName(){ return testName; }
 };
 
+class drugInfo //Base class for drug information
+{
+protected:
+    double dosage;
+    bool sideEffects;
+    string drugName;
+
+
+
+};
+
+class DrugA: drugInfo
+{
+
+};
+
+class DrugB: drugInfo
+{
+
+
+};
+
+class DrugC: drugInfo
+{
+
+};
+
+class DrugD: drugInfo
+{
+
+};
+
+class DrugE: drugInfo
+{
+
+};
+
+class DrugF: drugInfo
+{
+
+};
+
 class baseBloodTest:public baseTest
 {
 
