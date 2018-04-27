@@ -24,37 +24,41 @@ protected:
     bool sideEffects;
     string drugName;
 
+    informAllPatients(); //Update from drugRecord
+
+
+
 
 
 };
 
-class DrugA: drugInfo
+class DrugA: public drugInfo
 {
 
 };
 
-class DrugB: drugInfo
+class DrugB: public drugInfo
 {
 
 
 };
 
-class DrugC: drugInfo
+class DrugC: public drugInfo
 {
 
 };
 
-class DrugD: drugInfo
+class DrugD: public drugInfo
 {
 
 };
 
-class DrugE: drugInfo
+class DrugE: public drugInfo
 {
 
 };
 
-class DrugF: drugInfo
+class DrugF: public drugInfo
 {
 
 };
@@ -162,6 +166,10 @@ public:
 
     const string getName(){
         return name;
+    }
+
+    void Update(){
+        cout<<"The massage has sent"<<endl;
     }
 
 };
@@ -417,17 +425,30 @@ class drugRecord//maybe can become an observer
 private:
     vector<patient*> drugOwners[NUMBER_OF_DRUG_TYPES];//vector of patients for 6 different drugs
 public:
-    void addPatientToRecord(patient* patientToAdd, int whichDrug)
+    virtual ~drugRecord(){};
+    drugRecord(){};
+    void addPatientToRecord(patient* patientToAdd, int whichDrug) //'Attach' from observer pattern
     {
         drugOwners[whichDrug].push_back(patientToAdd);
     }
-    void informAllPatients(int whichDrug)//inform all drug owners about side effects
+    void releasePatientFromRecord(patient* patientToLeave, int whichDrug){ //'Detach' from observer pattern
+        for (unsigned int i = 0;i  < patientToLeave.size() ; i++) {
+            if(patientToLeave[i].getEmail() == patientToLeave->getEmail()){
+                patientToLeave.erase(patientToLeave.begin()+i);
+                return;
+            }
+
+        }
+
+    }
+    void informAllPatients(int whichDrug)//inform all drug owners about side effects 'Update' function
     {
         for(int i=0;i<drugOwners[whichDrug].size();i++)
         {
             cout<<"Patient with email: "<<drugOwners[whichDrug][i]->getEmail()<<" have been informed"<<endl;
         }
     }
+
 
 };
 
