@@ -8,13 +8,22 @@ using namespace std;
 
 class secretary;
 class baseClinic;
+class baseTestDepartment;
+class radiologyDepartment;
+class labDepartment;
+class baseTestRequest;
 
-class baseTest //XRay->radiology , blood->lab
-{
-protected:
-    string testName;
+class Mutex{    //Stub to manage a mutex
 public:
-    string getTestName(){ return testName; }
+    void lock()
+    {
+        cout<<"Mutex acquired the lock"<<endl;
+    }
+    void unlock()
+    {
+        cout<<"Mutex released the lock"<<endl;
+    }
+
 };
 
 class drugInfo //Base class for drug information
@@ -25,10 +34,6 @@ protected:
     string drugName;
 
     informAllPatients(); //Update from drugRecord
-
-
-
-
 
 };
 
@@ -60,6 +65,16 @@ class DrugE: public drugInfo
 
 class DrugF: public drugInfo
 {
+
+};
+//###################################################
+
+class baseTest //XRay->radiology , blood->lab
+{
+protected:
+    string testName;
+public:
+    string getTestName(){ return testName; }
 
 };
 
@@ -180,6 +195,8 @@ class secretaryCommand
 {
 protected:
     baseClinic* clinic;
+    static radiologyDepartment* radiology;
+    static vector<labDepartment*>* labDepartments;
     patient* requestingPatient;
 public:
     secretaryCommand(){}
@@ -194,6 +211,11 @@ public:
     }
     virtual void execute()=0;
     virtual string getCommandName()=0;
+    static void initializeTestDepartments(radiologyDepartment* rad, vector<labDepartment*>* labs)
+    {
+        radiology=rad;
+        labDepartments=labs;
+    }
 };
 
 class askForClinics:public secretaryCommand
@@ -246,7 +268,7 @@ public:
     void execute()
     {
         vector<baseTest*>* currentTests=requestingPatient->getTestsHaveDone();
-        vector<string>* requiredTestsOfClinic=clinic->getRequiredTests();
+        vector<baseTestRequest*>* requiredTestsOfClinic=clinic->getRequiredTests();
         cout<<"Secretary in "<<clinic->getClinicName()<<" clinic started to check tests for "<<requestingPatient->getName()<<endl;
         for(int i=0;i<requiredTestsOfClinic->size();i++)
         {
@@ -254,7 +276,7 @@ public:
             bool testFound=false;
             for(int j=0;j<currentTests->size();j++)
             {
-                if(requiredTestsOfClinic->at(i)==currentTests->at(j)->getTestName())
+                if(requiredTestsOfClinic->at(i)->getTestName()==currentTests->at(j)->getTestName())
                 {
                     testFound=true;
                     cout<<requestingPatient->getName()<<" has done "<<requiredTestsOfClinic->at(i)<<" test before."<<endl;
@@ -264,7 +286,17 @@ public:
             if(!testFound)
             {
                 cout<<requestingPatient->getName()<<" haven't done "<<requiredTestsOfClinic->at(i)<<" test before."<<endl;
-                //create a new test from clinic related with requiredTestsOfClinic->at(i) and add result to requesting Patient
+                baseTestDepartment* departmentToTestWith;
+                if(requiredTestsOfClinic->at(i)->getType()=="radiological")
+                {
+                    departmentToTestWith=radiology;
+                }
+                else if(requiredTestsOfClinic->at(i)->getType()=="blood")
+                {
+                    departmentToTestWith=labDepartments->at(0);//Normally it can be any other lab department. But there is no need to increase complexity.
+                }
+                departmentToTestWith->createTest(requiredTestsOfClinic->at(i));
+                currentTests->push_back(departmentToTestWith->getTestResult());
             }
         }
     }
@@ -320,74 +352,118 @@ public:
 
 };
 
+//#######################################################
+
+class baseTestRequest
+{
+protected:
+    string testType;
+    string testName;
+public:
+    virtual baseTest* requestTest()=0;
+    string getType(){ return testType;}
+    string getTestName(){ return testName;}
+};
+
+class EKGrequest:public baseTestRequest
+{
+public:
+    EKGrequest():testType("radiological"),testName("EKG"){}
+    baseTest* requestTest(){ return new cardiologyEKGTest;}
+};
+
+class XRAYrequest:public baseTestRequest
+{
+public:
+    XRAYrequest():testType("radiological"),testName("X-RAY"){}
+    baseTest* requestTest(){ return new orthopedicsXRayTest;}
+};
+class endocrinologyBloodTestRequest:public baseTestRequest
+{
+public:
+    endocrinologyBloodTestRequest():testType("blood"),testName("endocrinologyBloodTest"){}
+    baseTest* requestTest(){ return new endocrinologyBloodTest;}
+};
+class cardiologyBloodTestRequest:public baseTestRequest
+{
+public:
+    cardiologyBloodTestRequest():testType("blood"),testName("cardiologyBloodTest"){}
+    baseTest* requestTest(){ return new cardiologyBloodTest;}
+};
+
+
+//##########################################################
+
+class baseTestDepartment
+{
+protected:
+    string expectedTestType;
+public:
+    virtual void createTest(baseTestRequest* request)
+    {
+        if(request->getType()==expectedTestType)//Template method
+        {
+            setTestResult(request->requestTest());
+        }
+    }
+    virtual void setTestResult(baseTest* result)=0;
+    virtual baseTest* getTestResult(){}
+};
+
+//Singleton Class
+class radiologyDepartment:public baseTestDepartment //This class may act as a factory class to create tests
+{
+private:
+    radiologyDepartment():expectedTestType("radiological"){ }
+    radiologyDepartment(const radiologyDepartment&);
+    radiologyDepartment& operator=(const radiologyDepartment&);
+
+    static radiologyDepartment *instance;
+    static Mutex mutex;//symbolic mutex
+    baseTest* testResult;
+public:
+    static baseTestDepartment *GetInstance(){
+        if(instance == NULL){
+            mutex.lock();
+            if(instance == NULL){
+                instance = new radiologyDepartment();
+            }
+            mutex.unlock();
+        }
+        return instance;
+    }
+    void setTestResult(baseTest* result){ testResult=result; }
+    baseTest* getTestResult() { return testResult;}
+
+};
+Mutex radiologyDepartment::mutex;
+radiologyDepartment* radiologyDepartment::instance = NULL;
+
+class labDepartment:public baseTestDepartment
+{
+protected:
+    baseTest* testResult;
+public:
+    labDepartment():expectedTestType("blood"){}
+    void setTestResult(baseTest* result){ testResult=result; }
+    baseTest* getTestResult() { return testResult;}
+
+};
+
+//#########################################################
+
 class baseClinic //Clinic==Department
 {
 protected:
     string clinicName;
-    vector<string> requiredTests;
+    vector<baseTestRequest*> requiredTests;
     secretary* assignedSecretry;
 public:
     baseClinic(){assignedSecretry=new secretary(this);}
     ~baseClinic(){}
     string getClinicName() { return clinicName; }
-    virtual vector<string>* getRequiredTests(){ return &requiredTests;}
+    virtual vector<baseTestRequest*>* getRequiredTests(){ return &requiredTests;}
 
-};
-
-class Mutex{    //Stub to manage a mutex
-public:
-    void lock()
-    {
-        cout<<"Mutex acquired the lock"<<endl;
-    }
-    void unlock()
-    {
-        cout<<"Mutex released the lock"<<endl;
-    }
-
-};
-
-//Singleton Class
-class radiologyClinic:public baseClinic //This class may act as a factory class to create tests
-{
-private:
-    radiologyClinic():clinicName("radiology")
-    {
-        //this class will produce Test objects. Test type will be decided in checkTests command.
-        //requiredTests.push_back("Something about radiology");
-        //...
-    }
-    //Prevent Copying
-    radiologyClinic(const radiologyClinic&);
-    radiologyClinic& operator=(const radiologyClinic&);
-
-    static radiologyClinic *instance;
-    vector<string> requiredTests;
-    static Mutex mutex;//symbolic mutex
-public:
-    static radiologyClinic *GetradiologyClinic(){
-        if(instance == NULL){
-            mutex.lock();
-            if(instance == NULL){
-                instance = new radiologyClinic();
-            }
-            mutex.unlock();
-        }
-        return instance;
-
-    }
-
-    /*string GetrequiredTest(){
-        return requiredTests(rand() % requiredTests.size());
-    }*/
-};
-Mutex radiologyClinic::mutex;
-radiologyClinic* radiologyClinic::instance = NULL;
-
-class labClinic:public baseClinic
-{
-public:
-    labClinic():clinicName("lab"){}
 };
 
 class cardiologyClinic:public baseClinic
@@ -395,8 +471,8 @@ class cardiologyClinic:public baseClinic
 public:
     cardiologyClinic():clinicName("cardiology")
     {
-        requiredTests.push_back("EKG");
-        requiredTests.push_back("cardiologyBloodTest");
+        requiredTests.push_back(new EKGrequest);
+        requiredTests.push_back(new cardiologyBloodTestRequest);
     }
 
 };
@@ -406,7 +482,7 @@ class orthopedicsClinic:public baseClinic
 public:
     orthopedicsClinic():clinicName("orthopedics")
     {
-        requiredTests.push_back("X-RAY");
+        requiredTests.push_back(new XRAYrequest);
     }
 };
 
@@ -415,7 +491,7 @@ class endocrinologyClinic:public baseClinic
 public:
     endocrinologyClinic():clinicName("endocrinology")
     {
-        requiredTests.push_back("endocrinologyBloodTest");
+        requiredTests.push_back(new endocrinologyBloodTestRequest);
     }
 };
 
@@ -425,16 +501,16 @@ class drugRecord//maybe can become an observer
 private:
     vector<patient*> drugOwners[NUMBER_OF_DRUG_TYPES];//vector of patients for 6 different drugs
 public:
-    virtual ~drugRecord(){};
+    ~drugRecord(){};
     drugRecord(){};
     void addPatientToRecord(patient* patientToAdd, int whichDrug) //'Attach' from observer pattern
     {
         drugOwners[whichDrug].push_back(patientToAdd);
     }
     void releasePatientFromRecord(patient* patientToLeave, int whichDrug){ //'Detach' from observer pattern
-        for (unsigned int i = 0;i  < patientToLeave.size() ; i++) {
-            if(patientToLeave[i].getEmail() == patientToLeave->getEmail()){
-                patientToLeave.erase(patientToLeave.begin()+i);
+        for (unsigned int i = 0;i  < drugOwners[whichDrug].size() ; i++) {
+            if(drugOwners[whichDrug][i]->getEmail() == patientToLeave->getEmail()){
+                drugOwners[whichDrug].erase(drugOwners[whichDrug].begin()+i);
                 return;
             }
 
@@ -448,11 +524,10 @@ public:
             cout<<"Patient with email: "<<drugOwners[whichDrug][i]->getEmail()<<" have been informed"<<endl;
         }
     }
-
-
 };
 
 //###############################################################################
+
 
 int main() {
 
