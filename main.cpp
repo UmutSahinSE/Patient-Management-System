@@ -2,7 +2,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
-#define NUMBER_OF_DRUG_TYPES 6
+#define NUMBER_OF_DRUG_TYPES 4
 
 using namespace std;
 
@@ -32,40 +32,36 @@ protected:
     double dosage;
     bool sideEffects;
     string drugName;
+    int drugIndex;
 
+public:
+    int getDrugIndex() {
+        return drugIndex;
+    }
+
+protected:
     informAllPatients(); //Update from drugRecord
 
 };
 
 class DrugA: public drugInfo
 {
-
+    DrugA():drugIndex(0){}
 };
 
 class DrugB: public drugInfo
 {
-
-
+    DrugB():drugIndex(1){}
 };
 
 class DrugC: public drugInfo
 {
-
+    DrugC():drugIndex(2){}
 };
 
 class DrugD: public drugInfo
 {
-
-};
-
-class DrugE: public drugInfo
-{
-
-};
-
-class DrugF: public drugInfo
-{
-
+    DrugD():drugIndex(3){}
 };
 //###################################################
 
@@ -75,7 +71,7 @@ protected:
     string testName;
 public:
     string getTestName(){ return testName; }
-
+    virtual drugInfo* prescribeRelatedDrug()=0;
 };
 
 class baseBloodTest:public baseTest
@@ -87,12 +83,14 @@ class cardiologyBloodTest:public baseBloodTest
 {
 public:
     cardiologyBloodTest():testName("cardiologyBloodTest"){}
+    drugInfo* prescribeRelatedDrug(){ return new DrugA;}
 };
 
 class endocrinologyBloodTest:public baseBloodTest
 {
 public:
     endocrinologyBloodTest():testName("endocrinologyBloodTest") {}
+    drugInfo* prescribeRelatedDrug(){ return new DrugB;}
 };
 
 class baseRadiologicalTest:public baseTest
@@ -104,12 +102,14 @@ class cardiologyEKGTest:public baseRadiologicalTest
 {
 public:
     cardiologyEKGTest():testName("EKG") {}
+    drugInfo* prescribeRelatedDrug(){ return new DrugC;}
 };
 
 class orthopedicsXRayTest:public baseRadiologicalTest
 {
 public:
     orthopedicsXRayTest():testName("X-RAY") {}
+    drugInfo* prescribeRelatedDrug(){ return new DrugD;}
 };
 
 //################################################################################
@@ -156,7 +156,7 @@ private:
     demographicInfo* patientDemographicInfo;
     baseInsurance* patientInsurance;
     vector<baseTest*>* testsHaveDone;
-
+    vector<drugInfo*> drugInformationsPatientHolds;
 public:
     patient(){}
     ~patient()
@@ -183,9 +183,16 @@ public:
         return name;
     }
 
+    vector<drugInfo *>* getDrugsPatientHolds() const {
+        return &drugInformationsPatientHolds;
+    }
+
+    void addDrugInfo(drugInfo* added){drugInformationsPatientHolds.push_back(added);}
+
     void Update(){
         cout<<"The massage has sent"<<endl;
     }
+
 
 };
 
@@ -221,6 +228,9 @@ public:
 class askForClinics:public secretaryCommand
 {
 public:
+    askForClinics(baseClinic *pClinic, patient *pPatient) : secretaryCommand(pClinic, pPatient) {
+
+    }
     void execute()
     {
         cout<<requestingPatient->getName()<<" asked for clinic locations:"<<endl;
@@ -241,6 +251,9 @@ public:
 class askForAnAppointment:public secretaryCommand
 {
 public:
+    askForAnAppointment(baseClinic *pClinic, patient *pPatient) : secretaryCommand(pClinic, pPatient) {
+
+    }
     void execute()
     {
         cout<<"An appointment is made in "<<clinic->getClinicName()<<" clinic for "<<requestingPatient->getName()<<endl;
@@ -251,9 +264,18 @@ public:
 class seeDoctor:public secretaryCommand
 {
 public:
+    seeDoctor(baseClinic *pClinic, patient *pPatient) : secretaryCommand(pClinic, pPatient) {
+
+    }
     void execute()
     {
         cout<<"Doctor in "<<clinic->getClinicName()<<" clinic is ready to see "<<requestingPatient->getName()<<endl;
+        vector<baseTest*>* testsOfPatient=requestingPatient->getTestsHaveDone();
+        for(int i=0;i<testsOfPatient->size();i++)
+        {
+            drugInfo* drugInfoToAdd=testsOfPatient->at(i)->prescribeRelatedDrug();
+            requestingPatient->addDrugInfo(drugInfoToAdd);
+        }
     }
     string getCommandName(){return "seeDoctor";}
 };
@@ -350,6 +372,9 @@ public:
         previousCommandsByCurrentPatient.push_back(newCommand);
     }
 
+    baseClinic *getAssignedClinic() const {
+        return assignedClinic;
+    }
 };
 
 //#######################################################
@@ -422,7 +447,7 @@ private:
     static Mutex mutex;//symbolic mutex
     baseTest* testResult;
 public:
-    static baseTestDepartment *GetInstance(){
+    static radiologyDepartment *GetInstance(){
         if(instance == NULL){
             mutex.lock();
             if(instance == NULL){
@@ -503,18 +528,27 @@ private:
 public:
     ~drugRecord(){};
     drugRecord(){};
-    void addPatientToRecord(patient* patientToAdd, int whichDrug) //'Attach' from observer pattern
+    void addPatientToRecord(patient* patientToAdd) //'Attach' from observer pattern
     {
-        drugOwners[whichDrug].push_back(patientToAdd);
-    }
-    void releasePatientFromRecord(patient* patientToLeave, int whichDrug){ //'Detach' from observer pattern
-        for (unsigned int i = 0;i  < drugOwners[whichDrug].size() ; i++) {
-            if(drugOwners[whichDrug][i]->getEmail() == patientToLeave->getEmail()){
-                drugOwners[whichDrug].erase(drugOwners[whichDrug].begin()+i);
-                return;
-            }
-
+        vector<drugInfo*>* drugsOfPatient=patientToAdd->getDrugsPatientHolds();
+        for(int i=0;i<drugsOfPatient->size();i++)
+        {
+            drugOwners[drugsOfPatient->at(i)->getDrugIndex()].push_back(patientToAdd);
         }
+    }
+    void releasePatientFromRecord(patient* patientToLeave){ //'Detach' from observer pattern
+        vector<drugInfo*>* drugsOfPatient=patientToLeave->getDrugsPatientHolds();
+        for(int i=0;i<drugsOfPatient->size();i++)
+        {
+            for (unsigned int i = 0;i  < drugOwners[drugsOfPatient->at(i)->getDrugIndex()].size() ; i++) {
+                if(drugOwners[drugsOfPatient->at(i)->getDrugIndex()][i]->getEmail() == patientToLeave->getEmail()){
+                    drugOwners[drugsOfPatient->at(i)->getDrugIndex()].erase(drugOwners[drugsOfPatient->at(i)->getDrugIndex()].begin()+i);
+                    return;
+                }
+
+            }
+        }
+
 
     }
     void informAllPatients(int whichDrug)//inform all drug owners about side effects 'Update' function
@@ -530,6 +564,105 @@ public:
 
 
 int main() {
+    radiologyDepartment* radiology=radiologyDepartment::GetInstance();
+    vector<labDepartment*> labs;
+    labs.push_back(new labDepartment);
+    baseClinic* endo=new endocrinologyClinic;
+    baseClinic* card=new cardiologyClinic;
+    baseClinic* orth=new orthopedicsClinic;
+    secretary endoSecretary(endo);
+    secretary cardSecretary(card);
+    secretary orthSecretary(orth);
+    drugRecord record;
+    bool endLoop=false;
+
+    while(!endLoop)
+    {
+        while(true)
+        {
+            string result="";
+            cout<<"Please enter number of the option:"<<endl;
+            cout<<"1) New patient"<<endl;
+            cout<<"2) Exit"<<endl;
+            cin>>result;
+            if(result=="1")
+            {
+                break;
+            }
+            else if(result=="2")
+            {
+                endLoop=true;
+                break;
+            }
+        }
+        if(!endLoop)
+        {
+            //patient demographics... will be created here.
+            patient* Patient=new patient("aaa",new demographicInfo,new baseInsurance);
+            secretary* secretaryForClinic;
+            while (true)
+            {
+                string result;
+                cout<<"Choose which clinic to go:"<<endl;
+                cout<<"1)Endocrinology Clinic"<<endl;
+                cout<<"2)Orthopedics Clinic"<<endl;
+                cout<<"3)Cardiology Clinic"<<endl;
+                cin>>result;
+                if(result=="1") secretaryForClinic=&endoSecretary;
+                else if(result=="1") secretaryForClinic=&endoSecretary;
+                else if(result=="1") secretaryForClinic=&endoSecretary;
+                else continue;
+                secretaryForClinic->acceptNewPatient(Patient);
+                break;
+            }
+            while (true)
+            {
+                string result;
+                cout<<"Choose what do you want secretary to do:"<<endl;
+                cout<<"1)Check patient's tests"<<endl;
+                cout<<"2)Ask for directions of other clinics."<<endl;
+                cout<<"3)Ask for appointment"<<endl;
+                cout<<"4)See the doctor."<<endl;
+                cout<<"5)Patient wants to leave."<<endl;
+                cin>>result;
+                if(result=="5")
+                {
+                    cout<<"Patient leaves the clinic.";
+                    break;
+                }
+                else if(result=="1")
+                {
+                    secretaryCommand* checkTestCommand=new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(checkTestCommand);
+                    continue;
+                }
+                else if(result=="2")
+                {
+                    secretaryCommand* directionsCommand=new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(directionsCommand);
+                    continue;
+                }
+                else if(result=="3")
+                {
+                    secretaryCommand* appointmentCommand=new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(appointmentCommand);
+                    continue;
+                }
+                else if(result=="4")
+                {
+                    secretaryCommand* doctorCommand=new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(doctorCommand);
+                    continue;
+                }
+                else
+                {
+                    cout<<"Wrong input"<<endl;
+                    continue;
+                }
+            }
+            record.addPatientToRecord(Patient);
+        }
+    }
 
     return 0;
 }
