@@ -620,9 +620,13 @@ int main() {
                 cout<<"3)Cardiology Clinic"<<endl;
                 cin>>result;
                 if(result=="1") secretaryForClinic=&endoSecretary;
-                else if(result=="1") secretaryForClinic=&endoSecretary;
-                else if(result=="1") secretaryForClinic=&endoSecretary;
-                else continue;
+                else if(result=="2") secretaryForClinic=&orthSecretary;
+                else if(result=="3") secretaryForClinic=&cardSecretary;
+                else
+                {
+                    cout<<"Wrong input."<<endl;
+                    continue;
+                }
                 secretaryForClinic->acceptNewPatient(Patient);
                 break;
             }
