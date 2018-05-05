@@ -40,27 +40,31 @@ public:
     }
 
 protected:
-    informAllPatients(); //Update from drugRecord
+     informAllPatients(); //Update from drugRecord ##You may want to make this function static for calling this from main without an instance.
 
 };
 
 class DrugA: public drugInfo
 {
+public:
     DrugA():drugIndex(0){}
 };
 
 class DrugB: public drugInfo
 {
+public:
     DrugB():drugIndex(1){}
 };
 
 class DrugC: public drugInfo
 {
+public:
     DrugC():drugIndex(2){}
 };
 
 class DrugD: public drugInfo
 {
+public:
     DrugD():drugIndex(3){}
 };
 //###################################################
@@ -583,13 +587,20 @@ int main() {
             string result="";
             cout<<"Please enter number of the option:"<<endl;
             cout<<"1) New patient"<<endl;
-            cout<<"2) Exit"<<endl;
+            cout<<"2) Warn patients for a drug."
+            cout<<"3) Exit"<<endl;
             cin>>result;
             if(result=="1")
             {
                 break;
             }
+
             else if(result=="2")
+            {
+                //call inform all patients of drugInfo from here. Make sure to ask which drug to inform about from user, like I asked what to do above..
+            }
+
+            else if(result=="3")
             {
                 endLoop=true;
                 break;
@@ -597,7 +608,7 @@ int main() {
         }
         if(!endLoop)
         {
-            //patient demographics... will be created here.
+            //patient demographics... will be asked and created here.
             patient* Patient=new patient("aaa",new demographicInfo,new baseInsurance);
             secretary* secretaryForClinic;
             while (true)
