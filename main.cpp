@@ -40,7 +40,7 @@ public:
     }
 
 protected:
-     informAllPatients(); //Update from drugRecord ##You may want to make this function static for calling this from main without an instance.
+    static informAllPatients(); //Update from drugRecord ##You may want to make this function static for calling this from main without an instance.(Done)
 
 };
 
@@ -587,7 +587,7 @@ int main() {
             string result="";
             cout<<"Please enter number of the option:"<<endl;
             cout<<"1) New patient"<<endl;
-            cout<<"2) Warn patients for a drug."
+            cout<<"2) Warn patients for a drug.";
             cout<<"3) Exit"<<endl;
             cin>>result;
             if(result=="1")
@@ -598,6 +598,24 @@ int main() {
             else if(result=="2")
             {
                 //call inform all patients of drugInfo from here. Make sure to ask which drug to inform about from user, like I asked what to do above..
+                while(true){
+
+                    string result="";
+                    cout<<"Press 1 to be informed about your drug."<<endl;
+                    cout<<"Press 0 to exit."<<endl;
+                    cin>>result;
+                    if(result == "1"){
+
+                        informAllPatients();
+
+                    }
+
+                    else if(result == "0"){
+                        endLoop= true;
+                        break;
+                    }
+                }
+
             }
 
             else if(result=="3")
