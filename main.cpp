@@ -601,16 +601,39 @@ int main() {
                 while(true){
 
                     string result="";
-                    cout<<"Press 1 to be informed about your drug."<<endl;
-                    cout<<"Press 0 to exit."<<endl;
+                    cout<<"Please enter the ID of the drug that you want to be informed:"<<endl;
+                    cout<<"For drugA press 0"<<endl;
+                    cout<<"For drugB press 1"<<endl;
+                    cout<<"For drugC press 2"<<endl;
+                    cout<<"For drugD press 3"<<endl;
+                    cout<<"Press - to exit."<<endl;
                     cin>>result;
-                    if(result == "1"){
+                    if(result == "0"){
 
+                        drugInfo* Info=new drugInfo(DrugA->getDrugIndex(0));
                         informAllPatients();
 
                     }
 
-                    else if(result == "0"){
+                    else if(result == "1"){
+                        drugInfo* Info=new drugInfo(DrugB->getDrugIndex(1));
+                        inforAllPatients();
+
+                    }
+
+                    else if(result == "2"){
+                        drugInfo* Info=new drugInfo(DrugC->getDrugIndex(2));
+                        informAllPatients();
+
+                    }
+
+                    else if(result == "3"){
+                        drugInfo* Info=new drugInfo(DrugD->getDrugIndex(3));
+                        informAllPatients();
+
+                    }
+
+                    else if(result == "-"){
                         endLoop= true;
                         break;
                     }
