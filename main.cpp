@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <map>
 #define NUMBER_OF_DRUG_TYPES 4
 
 using namespace std;
@@ -23,9 +24,7 @@ public:
     {
         cout<<"Mutex released the lock"<<endl;
     }
-
 };
-
 class drugInfo //Base class for drug information
 {
 protected:
@@ -38,34 +37,51 @@ public:
     int getDrugIndex() {
         return drugIndex;
     }
+    string getDrugName(){
+        return drugName;
+    }
+
+    static string indexToName(int index){
+        if(index == 0){
+            return "DrugA";
+        }
+        if(index == 1){
+            return "DrugB";
+        }
+        if(index == 2){
+            return "DrugC";
+        }
+        if(index == 3){
+            return "DrugD";
+        }
+    }
 
 protected:
-    static informAllPatients(); //Update from drugRecord ##You may want to make this function static for calling this from main without an instance.(Done)
-
+    void informAllPatients(); //Update from drugRecord ##You may want to make this function static for calling this from main without an instance.(Done)
 };
 
 class DrugA: public drugInfo
 {
 public:
-    DrugA():drugIndex(0){}
+    DrugA():drugIndex(0), drugName("DrugA"){}
 };
 
 class DrugB: public drugInfo
 {
 public:
-    DrugB():drugIndex(1){}
+    DrugB():drugIndex(1), drugName("DrugB"){}
 };
 
 class DrugC: public drugInfo
 {
 public:
-    DrugC():drugIndex(2){}
+    DrugC():drugIndex(2), drugName("DrugC"){}
 };
 
 class DrugD: public drugInfo
 {
 public:
-    DrugD():drugIndex(3){}
+    DrugD():drugIndex(3), drugName("DrugD"){}
 };
 //###################################################
 
@@ -193,8 +209,9 @@ public:
 
     void addDrugInfo(drugInfo* added){drugInformationsPatientHolds.push_back(added);}
 
-    void Update(){
-        cout<<"The massage has sent"<<endl;
+    void Update(int drugIndex){
+
+        cout<<name<<" has been informed about "<<drugInfo::indexToName(drugIndex)<<endl;
     }
 
 
@@ -528,10 +545,17 @@ public:
 class drugRecord//maybe can become an observer
 {
 private:
-    vector<patient*> drugOwners[NUMBER_OF_DRUG_TYPES];//vector of patients for 6 different drugs
+    vector<patient*> drugOwners[NUMBER_OF_DRUG_TYPES];//vector of patients for 4 different drugs
+    map<int, string> nameForIndex;
 public:
     ~drugRecord(){};
-    drugRecord(){};
+    drugRecord(){
+        nameForIndex.insert(0, "DrugA");
+        nameForIndex.insert(1, "DrugB");
+        nameForIndex.insert(2, "DrugC");
+        nameForIndex.insert(3, "DrugD");
+
+    };
     void addPatientToRecord(patient* patientToAdd) //'Attach' from observer pattern
     {
         vector<drugInfo*>* drugsOfPatient=patientToAdd->getDrugsPatientHolds();
@@ -559,7 +583,7 @@ public:
     {
         for(int i=0;i<drugOwners[whichDrug].size();i++)
         {
-            cout<<"Patient with email: "<<drugOwners[whichDrug][i]->getEmail()<<" have been informed"<<endl;
+            drugOwners.at(i)->Update(whichDrug);
         }
     }
 };

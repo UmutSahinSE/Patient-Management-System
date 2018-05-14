@@ -10,7 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f09783ad-40f5-4526-8b78-baebdb1e47ea" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,8 +24,8 @@
       <file leaf-file-name="main.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/main.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="539">
-              <caret line="630" column="73" selection-start-line="630" selection-start-column="73" selection-end-line="630" selection-end-column="73" />
+            <state relative-caret-position="-1029">
+              <caret line="213" column="88" selection-start-line="213" selection-start-column="88" selection-end-line="213" selection-end-column="88" />
             </state>
           </provider>
         </entry>
@@ -120,17 +119,18 @@
       <workItem from="1525694018664" duration="1982000" />
       <workItem from="1525696348272" duration="12000" />
       <workItem from="1525701649432" duration="1431000" />
+      <workItem from="1526300236676" duration="3688000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6029000" />
+    <option name="totallyTimeSpent" value="9717000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="0" width="1440" height="900" extended-state="0" />
+    <frame x="0" y="0" width="1680" height="1050" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.14027777" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13988096" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Run" order="2" />
@@ -155,6 +155,13 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9450">
+          <caret line="630" column="73" selection-start-line="630" selection-start-column="73" selection-end-line="630" selection-end-column="73" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="9120">
@@ -188,8 +195,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/main.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="539">
-          <caret line="630" column="73" selection-start-line="630" selection-start-column="73" selection-end-line="630" selection-end-column="73" />
+        <state relative-caret-position="-1029">
+          <caret line="213" column="88" selection-start-line="213" selection-start-column="88" selection-end-line="213" selection-end-column="88" />
         </state>
       </provider>
     </entry>
