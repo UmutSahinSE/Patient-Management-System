@@ -2,18 +2,10 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
-//#include "secretary.h"
 #include <map>
 #define NUMBER_OF_DRUG_TYPES 4
 
 using namespace std;
-
-class secretary;
-class baseClinic;
-class baseTestDepartment;
-class radiologyDepartment;
-class labDepartment;
-class baseTestRequest;
 
 class Mutex{    //Stub to manage a mutex
 public:
@@ -324,18 +316,18 @@ class baseTestDepartment
 {
 protected:
     string expectedTestType;
+    baseTest* testResult;
 public:
     virtual void createTest(baseTestRequest* request)
     {
         if(request->getType()==expectedTestType)//Template method
         {
-            setTestResult(request->requestTest());
+            testResult=request->requestTest();
             cout<<"A new "<<request->getTestName()<<" test has been done"<<endl;
         }
     }
-    virtual void setTestResult(baseTest* result)=0;
     string &getExpectedTestType(){return expectedTestType;}
-    virtual baseTest* getTestResult(){}
+    baseTest* getTestResult(){return testResult;}
 };
 
 //Singleton Class
@@ -348,7 +340,6 @@ private:
 
     static radiologyDepartment *instance;
     static Mutex mutex;//symbolic mutex
-    baseTest* testResult;
 public:
     static radiologyDepartment *GetInstance(){
         if(instance == NULL){
@@ -360,8 +351,6 @@ public:
         }
         return instance;
     }
-    void setTestResult(baseTest* result){ testResult=result; }
-    baseTest* getTestResult() { return testResult;}
 
 };
 Mutex radiologyDepartment::mutex;
@@ -369,12 +358,8 @@ radiologyDepartment* radiologyDepartment::instance = NULL;
 
 class labDepartment:public baseTestDepartment
 {
-protected:
-    baseTest* testResult;
 public:
     labDepartment(){expectedTestType="blood";}
-    void setTestResult(baseTest* result){ testResult=result; }
-    baseTest* getTestResult() { return testResult;}
 
 };
 
