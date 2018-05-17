@@ -18,8 +18,7 @@ public:
         cout<<"Mutex released the lock"<<endl;
     }
 };
-class drugInfo //Base class for drug information
-{
+class drugInfo { //Base class for drug information
 protected:
     double dosage;
     bool sideEffects;
@@ -49,9 +48,7 @@ public:
         }
     }
 };
-
-class DrugA: public drugInfo
-{
+class DrugA: public drugInfo {
 public:
     DrugA()
     {
@@ -59,9 +56,7 @@ public:
         drugName="DrugA";
     }
 };
-
-class DrugB: public drugInfo
-{
+class DrugB: public drugInfo {
 public:
     DrugB()
     {
@@ -69,9 +64,7 @@ public:
         drugName="DrugB";
     }
 };
-
-class DrugC: public drugInfo
-{
+class DrugC: public drugInfo {
 public:
     DrugC()
     {
@@ -79,9 +72,7 @@ public:
         drugName="DrugC";
     }
 };
-
-class DrugD: public drugInfo
-{
+class DrugD: public drugInfo {
 public:
     DrugD()
     {
@@ -89,74 +80,47 @@ public:
         drugName="DrugD";
     }
 };
-//###################################################
-
-class baseTest //XRay->radiology , blood->lab
-{
+class baseTest { //XRay->radiology , blood->lab
 protected:
     string testName;
 public:
     string getTestName(){ return testName; }
     virtual drugInfo* prescribeRelatedDrug()=0;
 };
-
-class baseBloodTest:public baseTest
-{
-
-};
-
-class cardiologyBloodTest:public baseBloodTest
-{
+class baseBloodTest:public baseTest {};
+class cardiologyBloodTest:public baseBloodTest {
 public:
     cardiologyBloodTest(){ testName="cardiologyBloodTest"; }
     drugInfo* prescribeRelatedDrug(){ return new DrugA;}
 };
-
-class endocrinologyBloodTest:public baseBloodTest
-{
+class endocrinologyBloodTest:public baseBloodTest {
 public:
     endocrinologyBloodTest() { testName=("endocrinologyBloodTest"); }
     drugInfo* prescribeRelatedDrug(){ return new DrugB;}
 };
-
-class baseRadiologicalTest:public baseTest
-{
-
-};
-
-class cardiologyEKGTest:public baseRadiologicalTest
-{
+class baseRadiologicalTest:public baseTest {};
+class cardiologyEKGTest:public baseRadiologicalTest {
 public:
     cardiologyEKGTest(){testName="EKG";}
     drugInfo* prescribeRelatedDrug(){ return new DrugC;}
 };
-
-class orthopedicsXRayTest:public baseRadiologicalTest
-{
+class orthopedicsXRayTest:public baseRadiologicalTest {
 public:
     orthopedicsXRayTest(){testName="X-RAY";}
     drugInfo* prescribeRelatedDrug(){ return new DrugD;}
 };
-
-//################################################################################
-
 class baseInsurance //Insurances can be created via factory but not sure. What should we put inside?
 {
 
 };
-
 class governmentInsurance:public baseInsurance
 {
 
 };
-
 class otherInsurance:public baseInsurance //I don't know what other type of insurances are. We should modify the class name
 {
 
 };
-
-//################################################################################
-
 class demographicInfo
 {
 private:
@@ -172,11 +136,7 @@ public:
         return email;
     }
 };
-
-//###############################################################################
-
-class patient
-{
+class patient {
 private:
     string name;
     demographicInfo* patientDemographicInfo;
@@ -219,14 +179,8 @@ public:
 
         cout<<name<<" has been informed about "<<drugInfo::indexToName(drugIndex)<<endl;
     }
-
-
 };
-
-
-
-class baseTestRequest
-{
+class baseTestRequest {
 protected:
     string testType;
     string testName;
@@ -235,35 +189,27 @@ public:
     string getType(){ return testType;}
     string getTestName(){ return testName;}
 };
-
-class EKGrequest:public baseTestRequest
-{
+class EKGrequest:public baseTestRequest {
 public:
     EKGrequest(){testType="radiological";testName="EKG";}
     baseTest* requestTest(){ return new cardiologyEKGTest;}
 };
-
-class XRAYrequest:public baseTestRequest
-{
+class XRAYrequest:public baseTestRequest {
 public:
     XRAYrequest(){testType="radiological";testName="X-RAY";}
     baseTest* requestTest(){ return new orthopedicsXRayTest;}
 };
-class endocrinologyBloodTestRequest:public baseTestRequest
-{
+class endocrinologyBloodTestRequest:public baseTestRequest {
 public:
     endocrinologyBloodTestRequest(){testType="blood";testName="endocrinologyBloodTest";}
     baseTest* requestTest(){ return new endocrinologyBloodTest;}
 };
-class cardiologyBloodTestRequest:public baseTestRequest
-{
+class cardiologyBloodTestRequest:public baseTestRequest {
 public:
     cardiologyBloodTestRequest(){testType="blood";testName="cardiologyBloodTest";}
     baseTest* requestTest(){ return new cardiologyBloodTest;}
 };
-
-class doctor
-{
+class doctor {
 protected:
     drugInfo* prescribedDrug;
     virtual bool doctorIsAllowed(baseTest* test)=0;
@@ -278,27 +224,16 @@ public:
     }
     drugInfo *getPrescribedDrug() { return prescribedDrug; }
 };
-
-class endocrinologist:public doctor
-{
+class endocrinologist:public doctor {
     bool doctorIsAllowed(baseTest* test){ return test->getTestName()=="endocrinologyBloodTest";}
 };
-
-class orthopedist:public doctor
-{
+class orthopedist:public doctor {
     bool doctorIsAllowed(baseTest* test){ return test->getTestName()=="X-RAY";}
 };
-
-class cardiologist:public doctor
-{
+class cardiologist:public doctor {
     bool doctorIsAllowed(baseTest* test){ return test->getTestName()=="cardiologyBloodTest"||test->getTestName()=="EKG";}
 };
-
-
-//##########################################################
-
-class baseClinic //Clinic==Department
-{
+class baseClinic { //Clinic==Department
 protected:
     string clinicName;
     doctor* assignedDoctor;
@@ -314,9 +249,7 @@ public:
     }
 
 };
-
-class cardiologyClinic:public baseClinic
-{
+class cardiologyClinic:public baseClinic {
 public:
     cardiologyClinic()
     {
@@ -326,9 +259,7 @@ public:
     }
 
 };
-
-class orthopedicsClinic:public baseClinic
-{
+class orthopedicsClinic:public baseClinic {
 public:
     orthopedicsClinic()
     {
@@ -336,9 +267,7 @@ public:
         requiredTests.push_back(new XRAYrequest);
     }
 };
-
-class endocrinologyClinic:public baseClinic
-{
+class endocrinologyClinic:public baseClinic {
 public:
     endocrinologyClinic()
     {
@@ -346,11 +275,7 @@ public:
         requiredTests.push_back(new endocrinologyBloodTestRequest);
     }
 };
-
-//#######################################################
-
-class baseTestDepartment
-{
+class baseTestDepartment {
 protected:
     string expectedTestType;
     baseTest* testResult;
@@ -366,10 +291,8 @@ public:
     string &getExpectedTestType(){return expectedTestType;}
     baseTest* getTestResult(){return testResult;}
 };
-
 //Singleton Class
-class radiologyDepartment:public baseTestDepartment //This class may act as a factory class to create tests
-{
+class radiologyDepartment : public baseTestDepartment { //This class may act as a factory class to create tests
 private:
     radiologyDepartment(){ expectedTestType="radiological";}
     radiologyDepartment(const radiologyDepartment&);
@@ -388,22 +311,14 @@ public:
         }
         return instance;
     }
-
 };
 Mutex radiologyDepartment::mutex;
 radiologyDepartment* radiologyDepartment::instance = NULL;
-
-class labDepartment:public baseTestDepartment
-{
+class labDepartment:public baseTestDepartment {
 public:
     labDepartment(){expectedTestType="blood";}
-
 };
-
-//##############################################################################
-
-class secretaryCommand
-{
+class secretaryCommand {
 protected:
     baseClinic* clinic;
     static radiologyDepartment* radiology;
@@ -411,35 +326,24 @@ protected:
     patient* requestingPatient;
 public:
     secretaryCommand(){}
-    secretaryCommand(baseClinic* givenClinic, patient* givenPatient)
-    {
+    secretaryCommand(baseClinic* givenClinic, patient* givenPatient) {
         clinic=givenClinic;
         requestingPatient=givenPatient;
     }
-    ~secretaryCommand()
-    {
-
-    }
+    ~secretaryCommand() { }
     virtual void execute()=0;
     virtual string getCommandName()=0;
-    static void initializeTestDepartments(radiologyDepartment* rad, vector<labDepartment*>* labs)
-    {
+    static void initializeTestDepartments(radiologyDepartment* rad, vector<labDepartment*>* labs) {
         radiology=rad;
         labDepartments=labs;
     }
 };
-
 radiologyDepartment* secretaryCommand::radiology=NULL;
 vector<labDepartment*>* secretaryCommand::labDepartments=NULL;
-
-class askForClinics:public secretaryCommand
-{
+class askForClinics:public secretaryCommand {
 public:
-    askForClinics(baseClinic *pClinic, patient *pPatient) : secretaryCommand(pClinic, pPatient) {
-
-    }
-    void execute()
-    {
+    askForClinics(baseClinic *pClinic, patient *pPatient) : secretaryCommand(pClinic, pPatient) { }
+    void execute() {
         cout<<requestingPatient->getName()<<" asked for clinic locations:"<<endl;
         if(clinic->getClinicName() != "radiology")
             cout<<"Radiology Clinic is located in:"<<endl;//a location will made up for each
@@ -535,45 +439,33 @@ public:
     }
     string getCommandName(){return "checkTests";}
 };
-//################################################################################
-
-class secretary //This part will be modified. It will hold a command vector acting as a history. When patient gives a seeDoctor command, it checks if there was a Checktests command in the history.
-{
+class secretary { //This part will be modified. It will hold a command vector acting as a history. When patient gives a seeDoctor command, it checks if there was a Checktests command in the history.
 private:
     vector<secretaryCommand*> previousCommandsByCurrentPatient;
     patient* currentPatient;
     baseClinic* assignedClinic;
 public:
-    secretary(baseClinic* Clinic)
-    {
+    secretary(baseClinic* Clinic) {
         assignedClinic=Clinic;
     }
-    ~secretary()
-    {
+    ~secretary() {
         previousCommandsByCurrentPatient.erase(previousCommandsByCurrentPatient.begin(),previousCommandsByCurrentPatient.end());
     }
-    void acceptNewPatient(patient* newPatient)
-    {
+    void acceptNewPatient(patient* newPatient) {
         currentPatient=newPatient;
         cout<<"Secretary from "<<assignedClinic->getClinicName()<<" clinic accepted "<<currentPatient->getName()<<" to hear his requests"<<endl;
         previousCommandsByCurrentPatient.erase(previousCommandsByCurrentPatient.begin(),previousCommandsByCurrentPatient.end());
-
     }
-    void acceptRequest(secretaryCommand* newCommand)
-    {
-        if(newCommand->getCommandName()=="seeDoctor")
-        {
+    void acceptRequest(secretaryCommand* newCommand) {
+        if(newCommand->getCommandName()=="seeDoctor") {
             bool testsHaveBeenChecked=false;
-            for(int i=0;i<previousCommandsByCurrentPatient.size();i++)
-            {
-                if(previousCommandsByCurrentPatient[i]->getCommandName()=="checkTests")
-                {
+            for(int i=0;i<previousCommandsByCurrentPatient.size();i++) {
+                if(previousCommandsByCurrentPatient[i]->getCommandName()=="checkTests") {
                     testsHaveBeenChecked=true;
                     break;
                 }
             }
-            if(!testsHaveBeenChecked)
-            {
+            if(!testsHaveBeenChecked) {
                 cout<<currentPatient->getName()<<" requested to see the doctor from "<<assignedClinic->getClinicName()<<". However patient's tests haven't been checked before. "<<endl;
                 secretaryCommand* checkFromSecretary=new checkTests(assignedClinic,currentPatient);
                 checkFromSecretary->execute();
@@ -583,16 +475,11 @@ public:
         newCommand->execute();
         previousCommandsByCurrentPatient.push_back(newCommand);
     }
-
     baseClinic *getAssignedClinic() const {
         return assignedClinic;
     }
 };
-
-
-
-class drugRecord//maybe can become an observer
-{
+class drugRecord { //maybe can become an observer
 private:
     vector<patient*> drugOwners[NUMBER_OF_DRUG_TYPES];//vector of patients for 4 different drugs
     map<int, string> nameForIndex;
@@ -605,49 +492,38 @@ public:
         nameForIndex.insert(make_pair(3,"DrugD"));
 
     };
-    void addPatientToRecord(patient* patientToAdd) //'Attach' from observer pattern
-    {
-        vector<drugInfo*>* drugsOfPatient=patientToAdd->getDrugsPatientHolds();
-        for(int i=0;i<drugsOfPatient->size();i++)
-        {
+    void addPatientToRecord(patient* patientToAdd) { //'Attach' from observer pattern
+        vector<drugInfo*>* drugsOfPatient = patientToAdd->getDrugsPatientHolds();
+        for(int i=0;i<drugsOfPatient->size();i++) {
             drugOwners[drugsOfPatient->at(i)->getDrugIndex()].push_back(patientToAdd);
         }
     }
     void releasePatientFromRecord(patient* patientToLeave){ //'Detach' from observer pattern
         vector<drugInfo*>* drugsOfPatient=patientToLeave->getDrugsPatientHolds();
-        for(int i=0;i<drugsOfPatient->size();i++)
-        {
+        for(int i=0;i<drugsOfPatient->size();i++) {
             for (unsigned int i = 0;i  < drugOwners[drugsOfPatient->at(i)->getDrugIndex()].size() ; i++) {
                 if(drugOwners[drugsOfPatient->at(i)->getDrugIndex()][i]->getEmail() == patientToLeave->getEmail()){
                     drugOwners[drugsOfPatient->at(i)->getDrugIndex()].erase(drugOwners[drugsOfPatient->at(i)->getDrugIndex()].begin()+i);
                     return;
                 }
-
             }
         }
-
-
     }
-    void informAllPatients(int whichDrug)//inform all drug owners about side effects 'Update' function
-    {
-        for(int i=0;i<drugOwners[whichDrug].size();i++)
-        {
+    void informAllPatients(int whichDrug) { //inform all drug owners about side effects 'Update' function
+        for(int i=0;i<drugOwners[whichDrug].size();i++){
             drugOwners->at(i)->Update(whichDrug);
         }
     }
 };
-
-//###############################################################################
-
 
 int main() {
     radiologyDepartment* radiology=radiologyDepartment::GetInstance();
     vector<labDepartment*> labs;
     labs.push_back(new labDepartment);
     secretaryCommand::initializeTestDepartments(radiology,&labs);
-    baseClinic* endo=new endocrinologyClinic;
-    baseClinic* card=new cardiologyClinic;
-    baseClinic* orth=new orthopedicsClinic;
+    baseClinic* endo = new endocrinologyClinic;
+    baseClinic* card = new cardiologyClinic;
+    baseClinic* orth = new orthopedicsClinic;
     endo->assignDoctor(new endocrinologist);
     card->assignDoctor(new cardiologist);
     orth->assignDoctor(new orthopedist);
@@ -657,23 +533,19 @@ int main() {
     drugRecord record;
     bool endLoop=false;
 
-    while(!endLoop)
-    {
-        while(true)
-        {
+    while(!endLoop) {
+        while(true) {
             string result="";
             cout<<"Please enter number of the option:"<<endl;
             cout<<"1) New patient"<<endl;
             cout<<"2) Warn patients for a drug."<<endl;
             cout<<"3) Exit"<<endl;
             cin>>result;
-            if(result=="1")
-            {
+            if(result=="1") {
                 break;
             }
 
-            else if(result=="2")
-            {
+            else if(result=="2") {
                 //call inform all patients of drugInfo from here. Make sure to ask which drug to inform about from user, like I asked what to do above..
                 while(true){
 
@@ -708,14 +580,12 @@ int main() {
 
             }
 
-            else if(result=="3")
-            {
+            else if(result=="3") {
                 endLoop=true;
                 break;
             }
         }
-        if(!endLoop)
-        {
+        if(!endLoop) {
             //patient demographics... will be asked and created here.
             patient* Patient=new patient("aaa",new demographicInfo,new baseInsurance,new vector<baseTest*>);
             secretary* secretaryForClinic;
@@ -748,37 +618,58 @@ int main() {
                 cout<<"4)See the doctor."<<endl;
                 cout<<"5)Patient wants to leave."<<endl;
                 cin>>result;
-                if(result=="5")
-                {
+                if(result=="5") {                {
                     cout<<"Patient leaves the clinic.";
                     break;
                 }
-                else if(result=="1")
-                {
-                    secretaryCommand* checkTestCommand=new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
+                else if (result=="1") {
+                    secretaryCommand* checkTestCommand = new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
                     secretaryForClinic->acceptRequest(checkTestCommand);
                     continue;
                 }
-                else if(result=="2")
-                {
-                    secretaryCommand* directionsCommand=new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
+                else if(result=="2") {
+                    secretaryCommand* directionsCommand = new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
                     secretaryForClinic->acceptRequest(directionsCommand);
                     continue;
                 }
-                else if(result=="3")
-                {
-                    secretaryCommand* appointmentCommand=new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
+                else if(result=="3") {
+                    secretaryCommand* appointmentCommand = new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
                     secretaryForClinic->acceptRequest(appointmentCommand);
                     continue;
                 }
-                else if(result=="4")
-                {
-                    secretaryCommand* doctorCommand=new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
+                else if(result=="4") {
+                    secretaryCommand* doctorCommand = new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
                     secretaryForClinic->acceptRequest(doctorCommand);
                     continue;
                 }
-                else
-                {
+                else {
+                    cout<<"Wrong input"<<endl;
+                    continue;
+
+                    cout<<"Patient leaves the clinic.";
+                    break;
+                }
+                else if(result=="1") {
+                    secretaryCommand* checkTestCommand = new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(checkTestCommand);
+                    continue;
+                }
+                else if(result=="2") {
+                    secretaryCommand* directionsCommand = new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(directionsCommand);
+                    continue;
+                }
+                else if(result=="3") {
+                    secretaryCommand* appointmentCommand = new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(appointmentCommand);
+                    continue;
+                }
+                else if(result=="4") {
+                    secretaryCommand* doctorCommand = new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
+                    secretaryForClinic->acceptRequest(doctorCommand);
+                    continue;
+                }
+                else {
                     cout<<"Wrong input"<<endl;
                     continue;
                 }
