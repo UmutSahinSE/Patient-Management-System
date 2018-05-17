@@ -262,6 +262,23 @@ public:
     baseTest* requestTest(){ return new cardiologyBloodTest;}
 };
 
+class doctor
+{
+protected:
+    drugInfo* prescribedDrug;
+public:
+    void prescribe(baseTest* test)
+    {
+        prescribedDrug=test->prescribeRelatedDrug();
+        cout<<"Doctor decided to prescribe "<<prescribedDrug->getDrugName()<<endl;
+    }
+
+    drugInfo *getPrescribedDrug() {
+        return prescribedDrug;
+    }
+};
+
+
 
 //##########################################################
 
@@ -269,12 +286,16 @@ class baseClinic //Clinic==Department
 {
 protected:
     string clinicName;
+    doctor assignedDoctor;
     vector<baseTestRequest*> requiredTests;
 public:
     baseClinic(){}
     ~baseClinic(){}
     string getClinicName() { return clinicName; }
     virtual vector<baseTestRequest*>* getRequiredTests(){ return &requiredTests;}
+    doctor &getAssignedDoctor() {
+        return assignedDoctor;
+    }
 
 };
 
@@ -443,8 +464,8 @@ public:
         vector<baseTest*>* testsOfPatient=requestingPatient->getTestsHaveDone();
         for(int i=0;i<testsOfPatient->size();i++)
         {
-            drugInfo* drugInfoToAdd=testsOfPatient->at(i)->prescribeRelatedDrug();
-            cout<<"Doctor decided to prescribe "<<drugInfoToAdd->getDrugName()<<endl;
+            clinic->getAssignedDoctor().prescribe(testsOfPatient->at(i));
+            drugInfo* drugInfoToAdd=clinic->getAssignedDoctor().getPrescribedDrug();
             requestingPatient->addDrugInfo(drugInfoToAdd);
             cout<<"Patient received the drug."<<endl;
         }
