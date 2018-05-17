@@ -619,64 +619,64 @@ int main() {
                 cout<<"5)Patient wants to leave."<<endl;
                 cin>>result;
                 if(result=="5") {                {
-                    cout<<"Patient leaves the clinic.";
-                    break;
-                }
-                else if (result=="1") {
-                    secretaryCommand* checkTestCommand = new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(checkTestCommand);
-                    continue;
-                }
-                else if(result=="2") {
-                    secretaryCommand* directionsCommand = new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(directionsCommand);
-                    continue;
-                }
-                else if(result=="3") {
-                    secretaryCommand* appointmentCommand = new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(appointmentCommand);
-                    continue;
-                }
-                else if(result=="4") {
-                    secretaryCommand* doctorCommand = new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(doctorCommand);
-                    continue;
-                }
-                else {
-                    cout<<"Wrong input"<<endl;
-                    continue;
+                        cout<<"Patient leaves the clinic.";
+                        break;
+                    }
+                    else if (result=="1") {
+                        secretaryCommand* checkTestCommand = new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(checkTestCommand);
+                        continue;
+                    }
+                    else if(result=="2") {
+                        secretaryCommand* directionsCommand = new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(directionsCommand);
+                        continue;
+                    }
+                    else if(result=="3") {
+                        secretaryCommand* appointmentCommand = new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(appointmentCommand);
+                        continue;
+                    }
+                    else if(result=="4") {
+                        secretaryCommand* doctorCommand = new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(doctorCommand);
+                        continue;
+                    }
+                    else {
+                        cout<<"Wrong input"<<endl;
+                        continue;
 
-                    cout<<"Patient leaves the clinic.";
-                    break;
+                        cout<<"Patient leaves the clinic.";
+                        break;
+                    }
+                    else if(result=="1") {
+                        secretaryCommand* checkTestCommand = new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(checkTestCommand);
+                        continue;
+                    }
+                    else if(result=="2") {
+                        secretaryCommand* directionsCommand = new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(directionsCommand);
+                        continue;
+                    }
+                    else if(result=="3") {
+                        secretaryCommand* appointmentCommand = new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(appointmentCommand);
+                        continue;
+                    }
+                    else if(result=="4") {
+                        secretaryCommand* doctorCommand = new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
+                        secretaryForClinic->acceptRequest(doctorCommand);
+                        continue;
+                    }
+                    else {
+                        cout<<"Wrong input"<<endl;
+                        continue;
+                    }
                 }
-                else if(result=="1") {
-                    secretaryCommand* checkTestCommand = new checkTests(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(checkTestCommand);
-                    continue;
-                }
-                else if(result=="2") {
-                    secretaryCommand* directionsCommand = new askForClinics(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(directionsCommand);
-                    continue;
-                }
-                else if(result=="3") {
-                    secretaryCommand* appointmentCommand = new askForAnAppointment(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(appointmentCommand);
-                    continue;
-                }
-                else if(result=="4") {
-                    secretaryCommand* doctorCommand = new seeDoctor(secretaryForClinic->getAssignedClinic(),Patient);
-                    secretaryForClinic->acceptRequest(doctorCommand);
-                    continue;
-                }
-                else {
-                    cout<<"Wrong input"<<endl;
-                    continue;
-                }
+                record.addPatientToRecord(Patient);
             }
-            record.addPatientToRecord(Patient);
         }
-    }
 
-    return 0;
-}
+        return 0;
+    }
