@@ -1,3 +1,12 @@
+/*
+ * SE311 Project team:
+ *
+ * Selin Candemir   20150601009
+ * Umut Şahin       20150601043
+ * Kerimcan Uyanık  20150601050
+ */
+
+
 #include <iostream>
 #include <vector>
 #include <string>
