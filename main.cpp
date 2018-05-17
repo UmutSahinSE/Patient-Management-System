@@ -266,18 +266,33 @@ class doctor
 {
 protected:
     drugInfo* prescribedDrug;
+    virtual bool doctorIsAllowed(baseTest* test)=0;
 public:
-    void prescribe(baseTest* test)
+    virtual void prescribe(baseTest* test)
     {
-        prescribedDrug=test->prescribeRelatedDrug();
-        cout<<"Doctor decided to prescribe "<<prescribedDrug->getDrugName()<<endl;
+        if(doctorIsAllowed(test))
+        {
+            prescribedDrug=test->prescribeRelatedDrug();
+            cout<<"Doctor decided to prescribe "<<prescribedDrug->getDrugName()<<endl;
+        }
     }
-
-    drugInfo *getPrescribedDrug() {
-        return prescribedDrug;
-    }
+    drugInfo *getPrescribedDrug() { return prescribedDrug; }
 };
 
+class endocrinologist:public doctor
+{
+    bool doctorIsAllowed(baseTest* test){ return test->getTestName()=="endocrinologyBloodTest";}
+};
+
+class orthopedist:public doctor
+{
+    bool doctorIsAllowed(baseTest* test){ return test->getTestName()=="X-RAY";}
+};
+
+class cardiologist:public doctor
+{
+    bool doctorIsAllowed(baseTest* test){ return test->getTestName()=="cardiologyBloodTest"||test->getTestName()=="EKG";}
+};
 
 
 //##########################################################
@@ -286,14 +301,15 @@ class baseClinic //Clinic==Department
 {
 protected:
     string clinicName;
-    doctor assignedDoctor;
+    doctor* assignedDoctor;
     vector<baseTestRequest*> requiredTests;
 public:
     baseClinic(){}
-    ~baseClinic(){}
+    ~baseClinic(){ delete assignedDoctor;}
+    void assignDoctor(doctor* doctor){assignedDoctor=doctor;}
     string getClinicName() { return clinicName; }
     virtual vector<baseTestRequest*>* getRequiredTests(){ return &requiredTests;}
-    doctor &getAssignedDoctor() {
+    doctor* getAssignedDoctor() {
         return assignedDoctor;
     }
 
@@ -464,8 +480,8 @@ public:
         vector<baseTest*>* testsOfPatient=requestingPatient->getTestsHaveDone();
         for(int i=0;i<testsOfPatient->size();i++)
         {
-            clinic->getAssignedDoctor().prescribe(testsOfPatient->at(i));
-            drugInfo* drugInfoToAdd=clinic->getAssignedDoctor().getPrescribedDrug();
+            clinic->getAssignedDoctor()->prescribe(testsOfPatient->at(i));
+            drugInfo* drugInfoToAdd=clinic->getAssignedDoctor()->getPrescribedDrug();
             requestingPatient->addDrugInfo(drugInfoToAdd);
             cout<<"Patient received the drug."<<endl;
         }
@@ -632,6 +648,9 @@ int main() {
     baseClinic* endo=new endocrinologyClinic;
     baseClinic* card=new cardiologyClinic;
     baseClinic* orth=new orthopedicsClinic;
+    endo->assignDoctor(new endocrinologist);
+    card->assignDoctor(new cardiologist);
+    orth->assignDoctor(new orthopedist);
     secretary endoSecretary(endo);
     secretary cardSecretary(card);
     secretary orthSecretary(orth);
